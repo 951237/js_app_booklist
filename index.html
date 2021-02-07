@@ -14,7 +14,8 @@
     <!-- mt-4 : 여백 4 -->
     <div class="container mt-4">
         <!-- text-center : 글자 가운데 정렬 display-4 : h1보다 큰문자열에 사용 -->
-        <h1 class="display-4 text-center"><i class="fas fa-book-open text-primary"></i> My
+        <!-- i :  아이콘 가져오기 -->
+        <h1 class="display-4 text-center"><i class="fas fa-book-reader text-primary"></i> My
             <span class="text-primary">Book</span>List
         </h1>
         <form id="book-form">
@@ -30,18 +31,22 @@
                 <label for="isbn">ISBN</label>
                 <input type="text" id="isbn" class="form-control">
             </div>
+            <!-- btn : 버튼으로 지정, btn-primary :  버튼모양으로 파란색 지정, btn-block : 버튼의 크기를 폭만큼 늘리기 -->
             <input type="submit" value="Add Book" class="btn btn-primary btn-block">
         </form>
         <table class="table table-striped mt-5">
+            <!-- 표 헤더 -->
             <thead>
                 <th>Title</th>
                 <th>Author</th>
                 <th>ISBN#</th>
                 <th></th>
             </thead>
+            <!-- 표 본문은 js를 이용해서 추가 -->
             <tbody id="book-list"></tbody>
         </table>
     </div>
+    <!-- js와 연결 -->
     <script src="app.js"></script>
 </body>
 
