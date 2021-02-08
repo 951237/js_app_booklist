@@ -56,6 +56,16 @@ class UI {
         }
     }
 
+    // 경고메세지 띄우기
+    static showAlert(message, className) {
+        const div = document.createElement('div');
+        div.className = `alert alert-${className}`;
+        div.appendChild(document.createTextNode(message));
+        const container = document.querySelector('.container');
+        const form = document.querySelector('#book-form');
+        container.insertBefore(div, form);
+    }
+
     //  입력값 비우기
     static clearFields() {
         document.querySelector('#title').value = ""
@@ -77,14 +87,19 @@ document.querySelector('#book-form').addEventListener('submit', (e) => {
     const author = document.querySelector('#author').value;
     const isbn = document.querySelector('#isbn').value;
 
-    // book오브젝트 생성하기
-    const book = new Book(title, author, isbn);
+    // 빈값 확인
+    if (title === '' || author === '' || isbn === '') {
+        UI.showAlert('Please fill in all fields', 'danger');
+    } else {
+        // book오브젝트 생성하기
+        const book = new Book(title, author, isbn);
 
-    // 웹페이지에 넣기
-    UI.addBookToList(book);
+        // 웹페이지에 넣기
+        UI.addBookToList(book);
 
-    // 입력폼 비우기
-    UI.clearFields();
+        // 입력폼 비우기
+        UI.clearFields();
+    }
 });
 // Event : Remove a book
 // (e)는 익명함수 
