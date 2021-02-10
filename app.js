@@ -10,20 +10,7 @@ class Book {
 // UI Class : Handle UI Tasks
 class UI {
     static displayBooks() {
-        // 테스트용 데이터
-        const StoredBooks = [{
-                title: 'Book One',
-                author: 'John Doe',
-                isbn: '3434434'
-            },
-            {
-                title: 'Book Two',
-                author: 'Jane Doe',
-                isbn: '45545'
-            }
-        ];
-        //  
-        const books = StoredBooks;
+        const books = Store.getBooks();
 
         // book의 내용을 차례로 실행하기
         books.forEach((book) => UI.addBookToList(book));
@@ -60,10 +47,13 @@ class UI {
     static showAlert(message, className) {
         const div = document.createElement('div');
         div.className = `alert alert-${className}`;
-        div.appendChild(document.createTextNode(message));
+        div.appendChild(document.createTextNode(message)); // list의 append 개념
         const container = document.querySelector('.container');
         const form = document.querySelector('#book-form');
-        container.insertBefore(div, form);
+        container.insertBefore(div, form); // div에서 form앞에 넣기
+
+        // 3초뒤에 사라지게 하기
+        setTimeout(() => document.querySelector('.alert').remove(), 3000);
     }
 
     //  입력값 비우기
@@ -74,6 +64,37 @@ class UI {
     }
 }
 // Store Class
+class Store {
+    static getBooks() {
+        let books;
+        if (localStorage.getItem('books') === null) { // books 칸이 비어 있으면
+            books = []; // 리스트를 생성
+        } else {
+            // string를 json 객체로 변환하기
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+        return books;
+    }
+
+    static addBook(book) {
+        const books = Store.getBooks();
+        books.push(book);
+        // json객체를 String 객체로 변환
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+
+    static removeBook(isbn) {
+        const books = Store.getBooks();
+
+        books.forEach((book, index) => {
+            if (book.isbn === isbn) {
+                books.splice(index, 1); // splice - 배열의 기존 요소를 삭제 또는 교체하거나 새 요소를 추가하여 배열의 내용을 변경. 원본 배열자체를 수정
+            }
+        });
+
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+}
 
 // Event : display books
 document.addEventListener('DOMContentLoaded', UI.displayBooks);
@@ -97,14 +118,28 @@ document.querySelector('#book-form').addEventListener('submit', (e) => {
         // 웹페이지에 넣기
         UI.addBookToList(book);
 
+        // 로컬스토리지에 저장하기
+        Store.addBook(book);
+
+        // 성공 메세지 보여주기
+        UI.showAlert('Book Added', 'success');
+
         // 입력폼 비우기
         UI.clearFields();
     }
 });
+
 // Event : Remove a book
 // (e)는 익명함수 
 document.querySelector('#book-list').addEventListener('click', (e) => {
     // e 만 사용할 경우 윈도우의 좌표를 표시
     // e.target는 html의 엘리먼트를 반환
     UI.deleteBook(e.target)
+
+
+    // 로컬스토리지에서 삭제하기
+    Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
+
+    // 삭제 메세지 보여주기
+    UI.showAlert('Book Removed', 'success');
 });
